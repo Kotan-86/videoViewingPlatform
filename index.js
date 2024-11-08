@@ -82,7 +82,7 @@ player.addEventListener('seeking', function() {
 
     button.addEventListener('click', function(){
         downloadCSV(logData);
-        window.open('','_self').close();
+        // window.open('','_self').close();
     });
 })();
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <div id="gd"></div>
+
+        <script>
+            Plotly.newPlot("gd", /* JSON object */ {
+                "data": [{ "y": [1, 2, 3] }],
+                "layout": { "width": 600, "height": 400}
+            })
+        </script>
+    </body>
+</html>

@@ -6,11 +6,11 @@ var play = true;
 var seek = false;
 var participant_id = 0;
 
-player.addEventListener('timeupdate', function() {
-    prevTime = nowTime;
-    nowTime = player.currentTime;
-	// console.log(nowTime);
-});
+
+function pushId(){
+    let participant_id_element = document.getElementById('participant_id');
+    participant_id = participant_id_element.value;
+}
 
 player.addEventListener('playing', function() {
     if (participant_id == 0) {
@@ -18,7 +18,16 @@ player.addEventListener('playing', function() {
         alert("idを入力してください");
     }else{
         if (play){
-        console.log(participant_id + ',' + nowTime + ',' + [1, 0, 0, 0, 0, 0] + ',' + (nowTime - prevTime));
+            // console.log(participant_id + ',' + nowTime + ',' + [1, 0, 0, 0, 0, 0] + ',' + (nowTime - prevTime));
+            const progress = [1, 0, 0, 0, 0, 0];
+            const logData = {
+                participantId: participant_id,
+                timestamp: nowTime,
+                progress: progress,
+                duration: 0
+            };
+            const jsonString = JSON.stringify(logData);
+            console.log(jsonString);
         }else{
             play = true;
         }
@@ -32,10 +41,7 @@ player.addEventListener('pause', function() {
 });
 
 player.addEventListener('seeking', function() {
-    // console.log("前回の再生時間は" + prevTime);
     nowTime = player.currentTime;
-    // console.log("今回の再生時間は" + nowTime);
-    // console.log("時間差は" + (nowTime - prevTime));
     if((nowTime - prevTime) >= 5.000 && (nowTime - prevTime) <= 5.500){ //早送りスキップ
         console.log(participant_id + ',' + nowTime + ',' + [0, 0, 1, 0, 0, 0] + ',' + (nowTime - prevTime));
         play = false;
@@ -53,41 +59,51 @@ player.addEventListener('seeking', function() {
     }
 });
 
-(function(){
-    const originalLog = console.log;
-    let logData = [];
-    console.log = function(...args){
-        logData.push(args.join(', '));
-        originalLog.apply(console, args);
-    };
-    function downloadCSV(logData, filename = participant_id + '.csv'){
-        const csvContent = logData.join("\n");
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=shift-js'});
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+player.addEventListener('timeupdate', function() {
+    prevTime = nowTime;
+    nowTime = player.currentTime;
+});
 
-    const button = document.createElement('button');
-    button.textContent = ("小テストまで終えたのでログデータを送信する");
-    button.style.border = "solid 2px red";
-    button.style.borderRadius = "100px";
-    button.style.backgroundColor = "orange";
-    button.style.marginTop = "30px";
-    document.body.appendChild(button);
-
-    button.addEventListener('click', function(){
-        downloadCSV(logData);
-        // window.open('','_self').close();
-    });
-})();
-
-function pushId(){
-    let participant_id_element = document.getElementById('participant_id');
-    // console.log(participant_id_element.value);
-    participant_id = participant_id_element.value;
+function showNewButton(){
+    const goToLADButtonContainer = document.getElementById('goToLADButton');
+    const goToLADButton = document.createElement('button');
+    goToLADButton.textContent = "LADへ移動する";
+goToLADButton.addEventListener('click', function() {
+    const newPageUrl = 'lad.html';
+    window.location.href = newPageUrl;
+  });
+    goToLADButtonContainer.appendChild(goToLADButton);
 }
+
+// (function(){
+//     const originalLog = console.log;
+//     let logData = [];
+//     console.log = function(...args){
+//         logData.push(args.join(', '));
+//         originalLog.apply(console, args);
+//     };
+//     function downloadCSV(logData, filename = participant_id + '.csv'){
+//         const csvContent = logData.join("\n");
+//         const blob = new Blob([csvContent], { type: 'text/csv;charset=shift-js'});
+//         const link = document.createElement('a');
+//         const url = URL.createObjectURL(blob);
+//         link.setAttribute('href', url);
+//         link.setAttribute('download', filename);
+//         document.body.appendChild(link);
+//         link.click();
+//         document.body.removeChild(link);
+//     }
+
+//     const button = document.createElement('button');
+//     button.textContent = ("小テストまで終えたのでログデータを送信する");
+//     button.style.border = "solid 2px red";
+//     button.style.borderRadius = "100px";
+//     button.style.backgroundColor = "orange";
+//     button.style.marginTop = "30px";
+//     document.body.appendChild(button);
+
+//     button.addEventListener('click', function(){
+//         downloadCSV(logData);
+//         // window.open('','_self').close();
+//     });
+// })();
